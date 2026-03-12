@@ -1,0 +1,56 @@
+# =======================================
+# Sales Intelligence App — .gitignore
+# =======================================
+
+# ---- Python / Backend ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+dist/
+build/
+*.whl
+
+# Virtual environment
+venv/
+.venv/
+env/
+.env/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Raw data uploads (Olist CSVs — can be large)
+backend/data/raw/*.csv
+backend/data/
+
+# Environment variables
+.env
+*.env.local
+
+# Python editor artifacts
+.mypy_cache/
+.ruff_cache/
+
+# ---- Node / Frontend ----
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Vite build artifacts
+*.local
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- Editor ----
+.vscode/settings.json
+.idea/
+*.suo
+*.user
