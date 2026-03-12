@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, cast, String
 from app.models.sales import AnalyticsSales
 
 def get_summary_metrics(db: Session):
@@ -12,11 +12,18 @@ def get_summary_metrics(db: Session):
     }
 
 def get_sales_by_month(db: Session):
-    # No SQLite, extraímos mês e ano via strftime
+    # Compatível com PostgreSQL (produção) e SQLite (local):
+    # Extraímos ano e mês separadamente via func.extract e concatenamos como 'YYYY-MM'
+    year = func.extract('year', AnalyticsSales.order_date)
+    month = func.extract('month', AnalyticsSales.order_date)
+    month_label = (
+        cast(cast(year, String) + '-' + func.lpad(cast(month, String), 2, '0'), String)
+    ).label('month')
+
     query = db.query(
-        func.strftime('%Y-%m', AnalyticsSales.order_date).label('month'),
+        month_label,
         func.sum(AnalyticsSales.price).label('revenue')
-    ).group_by('month').order_by('month').all()
+    ).group_by(month_label).order_by(month_label).all()
     
     # Formata a resposta para facilitar no Recharts (ex: [{name: '2026-03', value: 100}])
     return [{"month": row.month, "revenue": round(row.revenue, 2)} for row in query if row.month]
